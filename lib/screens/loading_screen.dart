@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import '../services/networking.dart';
+import 'dart:developer';
 import '../services/location.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -15,6 +13,8 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen> {
   Location position = Location();
   String apiKey = '7fa0289b012b80415c65beab517fbb39';
+  double longitud = 0;
+  double latitud = 0;
   @override
   void initState() {
     super.initState();
@@ -35,19 +35,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
   void getPositionData() async{
     await position.getCurrentPosition();
-    double longitud = position.longitud;
-    double latitud = position.latitud;
-
-    http.Response response = await http.get(Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=$latitud.34&lon=$longitud&appid=$apiKey'));
-    if(response.statusCode == 200){
-      String data = response.body;
-      int condition = jsonDecode(data)['weather'][0]['id'];
-      double temperature = jsonDecode(data)['main']['temp'];
-      String city = jsonDecode(data)['name'];
-      print('id: $condition, temp: $temperature, city:$city');
-    } else {
-      print(response.statusCode);
-      print('choco');
-    }
-  }
+    longitud = position.longitud;
+    latitud = position.latitud;
+    Networking helperNetworking = Networking('https://api.openweathermap.org/data/2.5/weather?lat=$latitud&lon=$longitud&appid=$apiKey');
+    helperNetworking.getData();
+  } 
 }
