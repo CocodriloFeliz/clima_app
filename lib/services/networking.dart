@@ -7,12 +7,12 @@ class Networking{
   final String url;
   Networking(this.url);
 
-  void getData() async{
+  Future getData() async{
     http.Response response = await http.get(Uri.parse(url));
     
     if(response.statusCode == 200){
-      dynamic data = response.body;
-      return jsonDecode(data);
+      Map weatherData = jsonDecode(response.body);
+      return weatherData;
     } else {
       log(response.statusCode.toString());
     }
